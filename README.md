@@ -1,7 +1,7 @@
 <div align="center">
   <img src="public/train-icon.svg" alt="京铁门儿清 Logo" width="80" height="80">
   <h2>京铁门儿清</h2>
-  <p><a href="https://github.com/pioet/bjs-clear"><strong>🚀 立即体验</strong></a></p>
+  <p><a href="https://pioet.github.io/bjs-clear/"><strong>🚀 立即体验</strong></a></p>
 </div>
 
 **京铁门儿清**是一款提供北京地铁站内设施信息的导航助手。通过精确到车门的对位指引，助您在复杂的车站中瞬时锁定换乘捷径、直达目标出口、秒寻应急设施。
