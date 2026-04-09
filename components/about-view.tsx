@@ -60,7 +60,7 @@ export function AboutView() {
             <p className="flex items-start gap-2">
               <span className="text-muted-foreground">•</span>
               <span>
-                特别鸣谢：<span className="text-foreground">@-鸿菲-</span>
+                特别鸣谢：<span className="text-foreground">@-鴻菲-</span>
               </span>
             </p>
           </div>
