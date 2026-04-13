@@ -10,6 +10,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  env: {
+    BUILD_DATE: new Date().toISOString().split('T')[0],
+  },
 }
 
 export default nextConfig
