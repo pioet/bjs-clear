@@ -1,13 +1,13 @@
 "use client";
 
-import { MetroLine } from "@/lib/metro-data";
+import { MetroLine, type FavoriteStation } from "@/lib/metro-data";
 import { cn } from "@/lib/utils";
 import { getLineColor } from "@/lib/colors";
 
 interface StationListProps {
   line: MetroLine;
-  favoriteStations: string[];
-  onToggleFavorite: (stationName: string) => void;
+  favoriteStations: FavoriteStation[];
+  onToggleFavorite: (lineId: string, stationName: string) => void;
   onStationClick?: (stationIndex: number) => void;
 }
 
@@ -30,7 +30,9 @@ export function StationList({
         {line.stations.map((station, index) => {
           const isFirst = index === 0;
           const isLast = index === line.stations.length - 1;
-          const isFavorite = favoriteStations.includes(station.name);
+          const isFavorite = favoriteStations.some(
+            (f) => f.lineId === line.id && f.stationName === station.name
+          );
           const isTerminal = isFirst || isLast;
 
           return (

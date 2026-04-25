@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { metroLines } from "@/lib/metro-data";
+import { metroLines, type FavoriteStation } from "@/lib/metro-data";
 import { LineSelector } from "@/components/line-selector";
 import { StationList } from "@/components/station-list";
 import { SearchBar } from "@/components/search-bar";
@@ -18,7 +18,7 @@ export default function MetroApp() {
   const [activeTab, setActiveTab] = useState<"home" | "favorites" | "about">(
     "home"
   );
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteStation[]>([]);
   const [selectedStation, setSelectedStation] = useState<{
     lineId: string;
     stationIndex: number;
@@ -42,12 +42,18 @@ export default function MetroApp() {
     [selectedLineId]
   );
 
-  const toggleFavorite = (stationName: string) => {
-    setFavorites((prev) =>
-      prev.includes(stationName)
-        ? prev.filter((s) => s !== stationName)
-        : [...prev, stationName]
-    );
+  const toggleFavorite = (lineId: string, stationName: string) => {
+    setFavorites((prev) => {
+      const exists = prev.some(
+        (f) => f.lineId === lineId && f.stationName === stationName
+      );
+      if (exists) {
+        return prev.filter(
+          (f) => !(f.lineId === lineId && f.stationName === stationName)
+        );
+      }
+      return [...prev, { lineId, stationName }];
+    });
   };
 
   const handleSelectStation = (lineId: string, stationName: string) => {
@@ -67,14 +73,14 @@ export default function MetroApp() {
     setSelectedStation({ lineId: selectedLineId, stationIndex });
   };
 
-  const handleFavoriteStationClick = (stationName: string) => {
-    const line = metroLines.find((l) =>
-      l.stations.some((s) => s.name === stationName)
-    );
+  const handleFavoriteStationClick = (lineId: string, stationName: string) => {
+    setSelectedStation({ lineId, stationIndex: 0 });
+    const line = metroLines.find((l) => l.id === lineId);
     if (line) {
       const stationIndex = line.stations.findIndex((s) => s.name === stationName);
       if (stationIndex !== -1) {
-        setSelectedStation({ lineId: line.id, stationIndex });
+        setSelectedStation({ lineId, stationIndex });
+        setSelectedLineId(lineId);
         setActiveTab("home");
       }
     }
@@ -134,17 +140,20 @@ export default function MetroApp() {
           <StationDetail
             lineId={selectedStation.lineId}
             stationIndex={selectedStation.stationIndex}
-            isFavorite={favorites.includes(
-              metroLines
-                .find((l) => l.id === selectedStation.lineId)
-                ?.stations[selectedStation.stationIndex]?.name || ""
+            isFavorite={favorites.some(
+              (f) =>
+                f.lineId === selectedStation.lineId &&
+                f.stationName ===
+                  metroLines
+                    .find((l) => l.id === selectedStation.lineId)
+                    ?.stations[selectedStation.stationIndex]?.name
             )}
             onToggleFavorite={() => {
               const stationName = metroLines
                 .find((l) => l.id === selectedStation.lineId)
                 ?.stations[selectedStation.stationIndex]?.name;
               if (stationName) {
-                toggleFavorite(stationName);
+                toggleFavorite(selectedStation.lineId, stationName);
               }
             }}
             onBack={handleBackFromDetail}
@@ -164,8 +173,12 @@ export default function MetroApp() {
         {activeTab === "favorites" && (
           <FavoritesView
             favorites={favorites}
-            onRemoveFavorite={(name) =>
-              setFavorites((prev) => prev.filter((s) => s !== name))
+            onRemoveFavorite={(lineId, stationName) =>
+              setFavorites((prev) =>
+                prev.filter(
+                  (f) => !(f.lineId === lineId && f.stationName === stationName)
+                )
+              )
             }
             onStationClick={handleFavoriteStationClick}
           />

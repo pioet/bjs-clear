@@ -11,4 +11,9 @@ export interface MetroLine {
   stations: Station[];
 }
 
+export interface FavoriteStation {
+  lineId: string;
+  stationName: string;
+}
+
 export { metroLines } from "./data-adapter";
