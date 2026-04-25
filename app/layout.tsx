@@ -15,8 +15,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: '京铁门儿清 - 北京地铁站内导航',
-  description: '一款提供北京地铁站内设施信息的导航助手',
+  title: '京铁门儿清',
+  description: '北京地铁站内设施导航助手',
   generator: 'v0.app',
   icons: {
     icon: [
