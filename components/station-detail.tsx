@@ -12,6 +12,7 @@ interface StationDetailProps {
   onToggleFavorite: () => void;
   onBack: () => void;
   onNavigate: (stationIndex: number) => void;
+  onTransferLine: (lineId: string, stationIndex: number) => void;
 }
 
 export function StationDetail({
@@ -21,6 +22,7 @@ export function StationDetail({
   onToggleFavorite,
   onBack,
   onNavigate,
+  onTransferLine,
 }: StationDetailProps) {
   const line = metroLines.find((l) => l.id === lineId) || metroLines[0];
   const station = line.stations[stationIndex];
@@ -88,19 +90,45 @@ export function StationDetail({
       {/* 方向信息列表 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {stationDetail.directions.map((direction, idx) => (
-          <DirectionCard key={idx} direction={direction} lineColor={line.color} />
+          <DirectionCard
+            key={idx}
+            direction={direction}
+            lineColor={line.color}
+            stationName={station.name}
+            onTransferLine={onTransferLine}
+          />
         ))}
       </div>
     </div>
   );
 }
 
+// 解析换乘标签（如 "6号线"、"10号线[顺时针(内环)]"）为目标线路上的站点位置；
+// 应用内不存在的线路（如 S1线）返回 null，保持普通标签展示
+function resolveTransferTarget(
+  facility: string,
+  stationName: string
+): { lineId: string; stationIndex: number } | null {
+  const lineName = facility.replace(/\[.*?\]/g, "");
+  const targetLine = metroLines.find((l) => l.name === lineName);
+  if (!targetLine) return null;
+  const stationIndex = targetLine.stations.findIndex(
+    (s) => s.name === stationName
+  );
+  if (stationIndex === -1) return null;
+  return { lineId: targetLine.id, stationIndex };
+}
+
 function DirectionCard({
   direction,
   lineColor,
+  stationName,
+  onTransferLine,
 }: {
   direction: DirectionInfo;
   lineColor: string;
+  stationName: string;
+  onTransferLine: (lineId: string, stationIndex: number) => void;
 }) {
   return (
     <div className="rounded-xl overflow-hidden border border-border bg-background">
@@ -135,17 +163,39 @@ function DirectionCard({
                 const isExit = facility.includes("出口");
                 const lineColor = getLineColor(facility);
                 const isLine = lineColor !== "#666666";
-                
+                const transferTarget = resolveTransferTarget(facility, stationName);
+
+                const tagClassName = `px-3 py-1.5 text-sm rounded-md whitespace-nowrap ${
+                  isLine
+                    ? "text-white font-medium"
+                    : isExit
+                    ? "bg-background text-foreground font-semibold border-2 border-foreground"
+                    : "bg-muted text-foreground border-2 border-border"
+                }`;
+
+                // 换乘线路标签：点击跳转到对应线路的该站点详情
+                if (transferTarget) {
+                  return (
+                    <button
+                      key={fIdx}
+                      onClick={() =>
+                        onTransferLine(
+                          transferTarget.lineId,
+                          transferTarget.stationIndex
+                        )
+                      }
+                      className={`${tagClassName} cursor-pointer active:opacity-70`}
+                      style={{ backgroundColor: lineColor }}
+                    >
+                      {facility}
+                    </button>
+                  );
+                }
+
                 return (
                   <span
                     key={fIdx}
-                    className={`px-3 py-1.5 text-sm rounded-md whitespace-nowrap ${
-                      isLine
-                        ? "text-white font-medium"
-                        : isExit
-                        ? "bg-background text-foreground font-semibold border-2 border-foreground"
-                        : "bg-muted text-foreground border-2 border-border"
-                    }`}
+                    className={tagClassName}
                     style={isLine ? { backgroundColor: lineColor } : undefined}
                   >
                     {facility}

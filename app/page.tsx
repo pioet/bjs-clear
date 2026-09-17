@@ -170,6 +170,10 @@ export default function MetroApp() {
             onNavigate={(index) =>
               setSelectedStation({ ...selectedStation, stationIndex: index })
             }
+            onTransferLine={(lineId, stationIndex) => {
+              setSelectedStation({ lineId, stationIndex });
+              setSelectedLineId(lineId);
+            }}
           />
         )}
 
