@@ -44,6 +44,22 @@ export function AboutView() {
           </div>
         </section>
 
+        {/* 反馈 */}
+        <section className="border-t border-border pt-5">
+          <h2 className="text-base font-bold text-foreground mb-3">反馈</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            如有数据纠错或更新，以及任何建议，欢迎填写：
+            <a
+              href="https://m4m2asrw.jsjform.com/f/dmdeP4"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              问题反馈
+            </a>
+          </p>
+        </section>
+
         {/* 致谢 */}
         <section className="border-t border-border pt-5">
           <h2 className="text-base font-bold text-foreground mb-3">致谢</h2>
