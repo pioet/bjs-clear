@@ -90,6 +90,16 @@ export default function MetroApp() {
     setSelectedStation(null);
   };
 
+  const handleTabChange = (tab: "home" | "favorites" | "about") => {
+    if (tab === "home") {
+      // 完全重置：关闭站点详情、清空搜索、线路重置回 1 号线
+      setSelectedStation(null);
+      setSearchQuery("");
+      setSelectedLineId("1");
+    }
+    setActiveTab(tab);
+  };
+
   const isSearching = searchQuery.length > 0 && activeTab === "home";
 
   return (
@@ -188,7 +198,7 @@ export default function MetroApp() {
       </main>
 
       {/* 底部导航 */}
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 }
